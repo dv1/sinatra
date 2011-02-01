@@ -31,7 +31,7 @@ module Sinatra
 
     def route
       @route ||= begin
-        path = Rack::Utils.unescape(path_info)
+        path = path_info
         path.empty? ? "/" : path
       end
     end
@@ -655,6 +655,7 @@ module Sinatra
       @original_params ||= @params
       if match = pattern.match(@request.route)
         values = match.captures.to_a
+        values.map! { |e| Rack::Utils.unescape(e) }
         params =
           if keys.any?
             keys.zip(values).inject({}) do |hash,(k,v)|
